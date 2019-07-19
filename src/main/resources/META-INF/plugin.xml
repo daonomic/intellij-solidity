@@ -169,6 +169,12 @@
                          level="WARNING"
                          implementationClass="me.serce.solidity.ide.inspections.LinearizationImpossibleInspection"/>
 
+        <localInspection language="Solidity" groupName="Solidity"
+                         displayName="Function can not be resolved"
+                         enabledByDefault="true"
+                         level="WARNING"
+                         implementationClass="me.serce.solidity.ide.inspections.ResolveFunctionInspection"/>
+
         <errorHandler implementation="me.serce.solidity.ide.SentryReportSubmitter"/>
         <runConfigurationProducer implementation="me.serce.solidity.ide.run.SolidityRunConfigProducer"/>
         <runLineMarkerContributor language="Solidity" implementationClass="me.serce.solidity.ide.run.SolidityRunLineMarkerProvider"/>

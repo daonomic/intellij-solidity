@@ -15,7 +15,7 @@ class ResolveFunctionInspection : LocalInspectionTool() {
       override fun visitFunctionCallExpression(o: SolFunctionCallExpression) {
         val ref = o.reference
         if (ref is SolFunctionCallReference) {
-          val resolved = ref.multiResolve()
+          val resolved = ref.resolveAndFilter()
           if (resolved.isEmpty()) {
             holder.registerProblem(o, "Function call not resolved")
           } else if (resolved.size > 1) {

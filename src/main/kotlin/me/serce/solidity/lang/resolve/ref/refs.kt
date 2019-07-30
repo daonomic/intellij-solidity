@@ -79,6 +79,11 @@ class SolFunctionCallReference(element: SolFunctionCallExpression) : SolReferenc
     return element.referenceNameElement.parentRelativeRange
   }
 
+  fun resolveAndFilter(): Collection<ResolvedCallable> {
+    return resolveFunctionCall()
+      .filter { it.canBeApplied(element.functionCallArguments) }
+  }
+
   fun resolveFunctionCall(): Collection<ResolvedCallable> {
     return when (val expr = element.expression) {
       is SolPrimaryExpression -> {
@@ -162,8 +167,7 @@ class SolFunctionCallReference(element: SolFunctionCallExpression) : SolReferenc
   }
 
   override fun multiResolve(): Collection<PsiElement> {
-    return resolveFunctionCall()
-      .filter { it.canBeApplied(element.functionCallArguments) }
+    return resolveAndFilter()
       .mapNotNull { it.resolvedElement }
   }
 }

@@ -82,6 +82,12 @@ fun SolContractDefinition.findConstructors(): List<SolElement> {
 }
 
 class SolDotExpressionReference(element: SolDotExpression) : SolReferenceBase<SolDotExpression>(element) {
+  override fun calculateDefaultRangeInElement(): TextRange {
+    return element.identifier?.parentRelativeRange
+      ?: element.memberFunctionCall?.parentRelativeRange
+      ?: super.calculateDefaultRangeInElement()
+  }
+
   override fun multiResolve(): Collection<PsiElement> {
     return resolveMembers()
       .mapNotNull { it.resolveElement() }

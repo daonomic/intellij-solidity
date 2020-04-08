@@ -25,6 +25,7 @@ class SolKeywordCompletionContributor : CompletionContributor(), DumbAware {
     extend(
       CompletionType.BASIC, rootDeclaration(),
       SolKeywordCompletionProvider("pragma ", "import ", "contract ", "library "))
+
     extend(CompletionType.BASIC, rootDeclaration(), object : CompletionProvider<CompletionParameters>() {
       override fun addCompletions(parameters: CompletionParameters, context: ProcessingContext?, result: CompletionResultSet) {
         val pragmaBuilder = LookupElementBuilder

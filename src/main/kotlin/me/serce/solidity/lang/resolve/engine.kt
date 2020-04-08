@@ -126,13 +126,23 @@ object SolResolver {
     .toList()
 
   fun resolveVarLiteralReference(element: SolNamedElement): List<SolNamedElement> {
-    return resolveVarLiteral(element)
-      .findBest {
-        when (it) {
-          is SolStateVariableDeclaration -> 0
-          else -> Int.MAX_VALUE
-        }
+    val parent = element.parent
+    return if (parent is SolCallExpression) {
+      val resolved = parent.reference?.multiResolve() ?: emptyList()
+      if (resolved.isNotEmpty()) {
+        resolved.filterIsInstance<SolNamedElement>()
+      } else {
+        resolveVarLiteral(element)
       }
+    } else {
+      resolveVarLiteral(element)
+        .findBest {
+          when (it) {
+            is SolStateVariableDeclaration -> 0
+            else -> Int.MAX_VALUE
+          }
+        }
+    }
   }
 
   private fun <T : Any> List<T>.findBest(priorities: (T) -> Int): List<T> {

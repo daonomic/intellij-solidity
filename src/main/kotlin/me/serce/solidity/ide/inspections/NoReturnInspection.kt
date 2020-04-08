@@ -40,7 +40,7 @@ private fun SolFunctionDefinition.inspectReturns(holder: ProblemsHolder) {
 
 private val SolCallExpression.revert: Boolean
   get() {
-    return if (this.name == "revert") {
+    return if (this.varLiteral?.name == "revert") {
       val ref = this.reference?.resolve()
       ref?.isGlobal() ?: false
     } else {

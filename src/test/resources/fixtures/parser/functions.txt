@@ -111,7 +111,7 @@ Solidity File
                 SolVarLiteralImpl(VAR_LITERAL)
                   PsiElement(Identifier)('balanceOf')
               PsiElement([)('[')
-              SolMemberAccessExpressionImpl(MEMBER_ACCESS_EXPRESSION)
+              SolDotExpressionImpl(DOT_EXPRESSION)
                 SolPrimaryExpressionImpl(PRIMARY_EXPRESSION)
                   SolVarLiteralImpl(VAR_LITERAL)
                     PsiElement(Identifier)('msg')

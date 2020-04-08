@@ -57,10 +57,10 @@ class SolidityFormattingModelBuilder : FormattingModelBuilder {
         .betweenInside(MODIFIER_INVOCATION, MODIFIER_INVOCATION, FUNCTION_DEFINITION).spaces(1)
         .aroundInside(TO, MAPPING_TYPE_NAME).spaces(1)
         .aroundInside(TokenSet.create(
-          FUNCTION_CALL_EXPRESSION, CONSTANT, PAYABLE,
+          CALL_EXPRESSION, CONSTANT, PAYABLE,
           EXTERNAL, PUBLIC, INTERNAL, PRIVATE, IDENTIFIER),
           FUNCTION_DEFINITION).spaces(1)
-        .beforeInside(LPAREN, FUNCTION_CALL_EXPRESSION).none()
+        .beforeInside(LPAREN, CALL_EXPRESSION).none()
         .after(CONTROL_STRUCTURES).spaces(1)
         .beforeInside(STATEMENT, TokenSet.create(IF_STATEMENT, WHILE_STATEMENT, FOR_STATEMENT, DO_WHILE_STATEMENT)).spaces(1)
         .after(CONTRACT).spaces(1)
@@ -74,8 +74,8 @@ class SolidityFormattingModelBuilder : FormattingModelBuilder {
         .betweenInside(STATEMENT, ELSE, IF_STATEMENT).spaces(1)
         .after(STATEMENT).lineBreakInCode()
         .between(LBRACE, RBRACE).none()
-        .afterInside(EXPRESSION, MEMBER_ACCESS_EXPRESSION).none()
-        .beforeInside(IDENTIFIER, MEMBER_ACCESS_EXPRESSION).none()
+        .afterInside(EXPRESSION, DOT_EXPRESSION).none()
+        .beforeInside(IDENTIFIER, DOT_EXPRESSION).none()
         .between(IMPORT_DIRECTIVE, IMPORT_DIRECTIVE).blankLines(0)
         // 0 lines between event definitions
         .between(EVENT_DEFINITION, EVENT_DEFINITION).blankLines(0)

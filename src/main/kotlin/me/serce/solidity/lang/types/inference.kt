@@ -9,7 +9,8 @@ import me.serce.solidity.firstOrElse
 import me.serce.solidity.lang.psi.*
 import me.serce.solidity.lang.resolve.SolResolver
 import me.serce.solidity.lang.resolve.canBeApplied
-import me.serce.solidity.lang.resolve.ref.SolFunctionCallReference
+import me.serce.solidity.lang.resolve.ref.SolCallExpressionReference
+import me.serce.solidity.lang.resolve.ref.SolDotExpressionReference
 import me.serce.solidity.lang.types.SolArray.SolDynamicArray
 import me.serce.solidity.lang.types.SolArray.SolStaticArray
 import kotlin.math.max
@@ -164,11 +165,18 @@ fun inferExprType(expr: SolExpression?): SolType {
       inferExprType(expr.expressionList[0]),
       inferExprType(expr.expressionList[1])
     )
-    is SolFunctionCallExpression -> {
-      (expr.reference as SolFunctionCallReference)
+    is SolCallExpression -> {
+      (expr.reference as SolCallExpressionReference)
         .resolveFunctionCall()
-        .firstOrNull { it.canBeApplied(expr.functionCallArguments) }
+        .firstOrNull { it.canBeApplied(expr.functionCallArguments?.expressionList ?: emptyList()) }
         ?.parseType()
+        ?: SolUnknown
+    }
+    is SolDotExpression -> {
+      (expr.reference as SolDotExpressionReference)
+        .resolveMembers()
+        .map { it.parseType() }
+        .firstOrNull()
         ?: SolUnknown
     }
     is SolAndExpression,
@@ -183,12 +191,6 @@ fun inferExprType(expr: SolExpression?): SolType {
         else -> SolUnknown
       }
     }
-    is SolMemberAccessExpression -> {
-      return SolResolver.resolveMemberAccess(expr)
-        .firstOrNull()
-        ?.parseType()
-        ?: SolUnknown
-    }
     is SolParenExpression ->
       inferExprType(expr.expression)
     is SolUnaryExpression ->
@@ -202,19 +204,6 @@ private fun getNumericExpressionType(firstType: SolType, secondType: SolType): S
     SolInteger(!(!firstType.unsigned || !secondType.unsigned), max(firstType.size, secondType.size))
   } else {
     SolUnknown
-  }
-}
-
-fun SolExpression.getMembers(): List<SolMember> {
-  return when {
-    this is SolPrimaryExpression && varLiteral?.name == "super" -> {
-      val contract = this.findContract()
-      contract?.let { SolResolver.resolveContractMembers(it, true) }
-        ?: emptyList()
-    }
-    else -> {
-      this.type.getMembers(this.project)
-    }
   }
 }
 

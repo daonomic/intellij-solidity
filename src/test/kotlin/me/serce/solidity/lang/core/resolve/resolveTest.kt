@@ -1,14 +1,14 @@
 package me.serce.solidity.lang.core.resolve
 
 import com.intellij.psi.PsiElement
-import me.serce.solidity.lang.psi.SolFunctionCallExpression
+import me.serce.solidity.lang.psi.SolCallExpression
 import me.serce.solidity.lang.psi.SolNamedElement
 import me.serce.solidity.utils.SolTestBase
 import org.intellij.lang.annotations.Language
 
 abstract class SolResolveTestBase : SolTestBase() {
   protected fun checkFunctionByCode(@Language("Solidity") code: String) {
-    checkByCodeInternal<SolFunctionCallExpression, SolNamedElement>(code)
+    checkByCodeInternal<SolCallExpression, SolNamedElement>(code)
   }
 
   protected open fun checkByCode(@Language("Solidity") code: String) {

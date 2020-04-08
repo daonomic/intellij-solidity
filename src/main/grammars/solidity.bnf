@@ -14,7 +14,7 @@
   tokenTypeClass="me.serce.solidity.lang.core.SolidityTokenTypes"
 
   tokens = [
-    comment='regexp:(//.*)|(/\\*(?:.|[\\n\\r])*?\\*/)'
+    comment='regexp:(//.*)|(/\\*(?:.|[\n\r])*?\\*/)'
     hexLiteral='regexp:hex"([0-9a-fA-F]+)"'
     stringLiteral='regexp:("([^"\r\n\\]|\\.)*")'
     decimalNumber='regexp:([0-9][_0-9]*)'
@@ -374,8 +374,8 @@ Expression ::=
 private HighestPriorityGroup ::= IncrementExpression
                       | NewExpression
                       | IndexAccessExpression
-                      | MemberAccessExpression
-                      | FunctionCallExpression
+										  | CallExpression
+  										| DotExpression
                       | ParenExpression
 
 AssignmentExpression ::= Expression ('=' | '|=' | '^=' | '&=' | '<<=' | '>>=' | '+=' | '-=' | '*=' | '/=' | '%=') Expression { rightAssociative=true }
@@ -408,9 +408,20 @@ VarLiteral ::= Identifier {
     implements = "me.serce.solidity.lang.psi.SolReferenceElement"
     mixin = "me.serce.solidity.lang.psi.impl.SolVarLiteralMixin"
 }
-FunctionCallExpression ::= Expression '(' FunctionCallArguments? ')' {
-    implements = "me.serce.solidity.lang.psi.SolFunctionCallElement"
-    mixin = "me.serce.solidity.lang.psi.impl.SolFunctionCallMixin"
+OptionalCallParam ::= ('value' ParenExpression) | ('gas' ParenExpression)
+OptionalCallParams ::= ('.' 'call')? ('.' OptionalCallParam)*
+MemberFunctionCall ::= Identifier OptionalCallParams '(' FunctionCallArguments? ')'
+private MemberFunctionCallOrStateVar ::= MemberFunctionCall | Identifier
+DotExpression ::= Expression '.' MemberFunctionCallOrStateVar {
+		pin = 2
+		implements = "me.serce.solidity.lang.psi.SolReferenceElement"
+		mixin = "me.serce.solidity.lang.psi.impl.SolDotExpressionMixin"
+}
+private CallExpressionBase ::= VarLiteral | ElementaryTypeNameExpression
+CallExpression ::= CallExpressionBase OptionalCallParams '(' FunctionCallArguments? ')' {
+		pin = 3
+		implements = "me.serce.solidity.lang.psi.SolReferenceElement"
+		mixin = "me.serce.solidity.lang.psi.impl.SolCallExpressionMixin"
 }
 
 FunctionCallArguments ::= MapExpression | Expression? ( ',' Expression )*
@@ -423,11 +434,6 @@ NewExpression ::= new ( Identifier | PrimitiveLiteral ) NewExpressionEnd* {
 }
 private NewExpressionEnd ::='(' FunctionCallArguments')' | '[' Expression? ']'
 
-MemberAccessExpression ::= Expression '.' Identifier {
-    pin = 2
-    implements = "me.serce.solidity.lang.psi.SolReferenceElement"
-    mixin = "me.serce.solidity.lang.psi.impl.SolMemberAccessElement"
-}
 IndexAccessExpression ::= Expression '[' Expression? ']'
 
 BooleanLiteral ::= booleanLiteral

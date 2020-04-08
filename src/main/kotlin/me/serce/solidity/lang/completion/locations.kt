@@ -6,10 +6,9 @@ import com.intellij.patterns.StandardPatterns
 import com.intellij.psi.PsiElement
 import me.serce.solidity.lang.core.SolidityFile
 import me.serce.solidity.lang.core.SolidityTokenTypes
+import me.serce.solidity.lang.psi.SolCallExpression
 import me.serce.solidity.lang.psi.SolFunctionCallArguments
-import me.serce.solidity.lang.psi.SolFunctionCallExpression
 import me.serce.solidity.lang.psi.SolPrimaryExpression
-
 
 fun emitStartStatement() =
   psiElement(SolidityTokenTypes.IDENTIFIER)
@@ -30,7 +29,7 @@ fun expression(): ElementPattern<PsiElement> =
   )
 
 fun functionCall(): ElementPattern<PsiElement> =
-  psiElement(SolidityTokenTypes.IDENTIFIER).inside(SolFunctionCallExpression::class.java)
+  psiElement(SolidityTokenTypes.IDENTIFIER).inside(SolCallExpression::class.java)
 
 fun primaryExpression(): ElementPattern<PsiElement> =
   psiElement(SolidityTokenTypes.IDENTIFIER).inside(SolPrimaryExpression::class.java)

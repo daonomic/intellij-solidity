@@ -55,7 +55,7 @@ private fun deduceSemicolonOrBracket(editor: Editor, file: SolidityFile, startOf
   }
 
   if (!iterator.atEnd() && iterator.tokenType === SolidityTokenTypes.LPAREN
-    && getParentOfType(element, SolFunctionCallExpression::class.java) != null
+    && getParentOfType(element, SolCallExpression::class.java) != null
   ) {
     return "" // function call
   }

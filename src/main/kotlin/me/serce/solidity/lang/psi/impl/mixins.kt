@@ -256,6 +256,7 @@ abstract class SolStructDefMixin : SolStubbedNamedElementImpl<SolStructDefStub>,
   override val callablePriority = 1000
 }
 
+/*
 abstract class SolFunctionCallMixin(node: ASTNode) : SolNamedElementImpl(node), SolFunctionCallElement {
   override fun getBaseAndReferenceNameElement(): Pair<SolExpression?, PsiElement> {
     return when (val expr = expression) {
@@ -278,6 +279,7 @@ abstract class SolFunctionCallMixin(node: ASTNode) : SolNamedElementImpl(node), 
 
   override fun getReference(): SolReference = SolFunctionCallReference(this as SolFunctionCallExpression)
 }
+*/
 
 abstract class SolModifierInvocationMixin(node: ASTNode) : SolNamedElementImpl(node), SolModifierInvocationElement {
 
@@ -335,13 +337,23 @@ abstract class SolUserDefinedTypeNameImplMixin : SolStubbedElementImpl<SolTypeRe
   }
 }
 
-abstract class SolMemberAccessElement(node: ASTNode) : SolNamedElementImpl(node), SolMemberAccessExpression {
+abstract class SolDotExpressionMixin(node: ASTNode) : SolNamedElementImpl(node), SolDotExpression {
+  override fun getNameIdentifier(): PsiElement? = referenceNameElement
   override val referenceNameElement: PsiElement
-    get() = findChildByType(IDENTIFIER)!!
+    get() = (memberFunctionCall?.identifier ?: identifier)!!
   override val referenceName: String
     get() = referenceNameElement.text
 
-  override fun getReference() = SolMemberAccessReference(this)
+  override fun getReference() = SolDotExpressionReference(this)
+}
+
+abstract class SolCallExpressionMixin(node: ASTNode) : SolNamedElementImpl(node), SolCallExpression {
+  override val referenceNameElement: PsiElement
+    get() = (varLiteral ?: elementaryTypeName)!!
+  override val referenceName: String
+    get() = referenceNameElement.text
+
+  override fun getReference() = SolCallExpressionReference(this)
 }
 
 abstract class SolNewExpressionElement(node: ASTNode) : SolNamedElementImpl(node), SolNewExpression {

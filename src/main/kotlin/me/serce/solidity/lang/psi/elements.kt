@@ -29,6 +29,11 @@ interface SolCallable {
   fun resolveElement(): SolNamedElement?
 }
 
+data class Signature(
+  val name: String,
+  val params: List<SolType>
+)
+
 interface SolCallableElement : SolCallable, SolNamedElement
 
 interface SolStateVarElement : SolMember, SolCallableElement {
@@ -48,12 +53,14 @@ interface SolFunctionDefElement : SolHasModifiersElement, SolMember, SolCallable
 inline fun <reified T : Enum<*>> safeValueOf(name: String): T? =
   T::class.java.enumConstants.firstOrNull { it.name == name }
 
+/*
 interface SolFunctionCallElement : SolReferenceElement {
   val expression: SolExpression
   val functionCallArguments: SolFunctionCallArguments
 
   fun getBaseAndReferenceNameElement(): Pair<SolExpression?, PsiElement>
 }
+*/
 
 interface SolModifierInvocationElement : SolReferenceElement {
   val varLiteral: SolVarLiteral

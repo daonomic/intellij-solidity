@@ -6,7 +6,6 @@ import me.serce.solidity.lang.completion.SolCompleter
 import me.serce.solidity.lang.psi.*
 import me.serce.solidity.lang.resolve.SolResolver
 import me.serce.solidity.lang.resolve.canBeApplied
-import me.serce.solidity.lang.resolve.function.SolFunctionResolver
 import me.serce.solidity.lang.types.*
 import me.serce.solidity.wrap
 
@@ -39,6 +38,7 @@ class SolModifierReference(
   override fun getVariants() = SolCompleter.completeModifier(modifierElement)
 }
 
+/*
 class SolMemberAccessReference(element: SolMemberAccessExpression) : SolReferenceBase<SolMemberAccessExpression>(element), SolReference {
   override fun calculateDefaultRangeInElement(): TextRange {
     return element.identifier?.parentRelativeRange ?: super.calculateDefaultRangeInElement()
@@ -49,6 +49,7 @@ class SolMemberAccessReference(element: SolMemberAccessExpression) : SolReferenc
 
   override fun getVariants() = SolCompleter.completeMemberAccess(element)
 }
+*/
 
 class SolNewExpressionReference(element: SolNewExpression) : SolReferenceBase<SolNewExpression>(element), SolReference {
 
@@ -80,6 +81,86 @@ fun SolContractDefinition.findConstructors(): List<SolElement> {
   }
 }
 
+class SolDotExpressionReference(element: SolDotExpression) : SolReferenceBase<SolDotExpression>(element) {
+  override fun multiResolve(): Collection<PsiElement> {
+    return resolveMembers()
+      .mapNotNull { it.resolveElement() }
+  }
+
+  override fun getVariants(): Array<out Any> {
+    return SolCompleter.completeMemberAccess(element)
+  }
+
+  fun resolveMembers(): List<SolMember> {
+    val expr = element.expression
+
+    val contextType = when {
+      expr is SolPrimaryExpression && expr.varLiteral?.name == "super" -> ContextType.SUPER
+      else -> ContextType.EXTERNAL
+    }
+
+    val byName = SolResolver.resolveMembers(expr)
+      .filter { it.getName() == element.name }
+
+    val functionCall = element.memberFunctionCall
+    val resolved = if (functionCall != null) {
+      byName
+        .filter { it.getPossibleUsage(contextType) == Usage.CALLABLE }
+        .filterIsInstance<SolCallable>()
+        .filter { it.canBeApplied(functionCall.functionCallArguments?.expressionList ?: emptyList()) }
+        .filterIsInstance<SolMember>()
+        .toList()
+    } else {
+      byName
+        .filter { it.getPossibleUsage(contextType) == Usage.VARIABLE }
+        .toList()
+    }
+    return if (resolved.size == 1) {
+      resolved
+    } else {
+      byName.toList()
+    }
+  }
+}
+
+class SolCallExpressionReference(element: SolCallExpression) : SolReferenceBase<SolCallExpression>(element) {
+
+  override fun multiResolve(): Collection<PsiElement> {
+    return resolveFunctionCallAndFilter()
+      .mapNotNull { it.resolveElement() }
+  }
+
+  fun resolveFunctionCallAndFilter(): List<SolCallable> {
+    return resolveFunctionCall()
+      .filter { it.canBeApplied(element.functionCallArguments?.expressionList ?: emptyList()) }
+  }
+
+  fun resolveFunctionCall(): Collection<SolCallable> {
+    val regular = element.varLiteral?.let { SolResolver.resolveVarLiteral(it) }
+      ?.filter { it !is SolStateVariableDeclaration }
+      ?.filterIsInstance<SolCallable>()
+      ?: emptyList()
+    val casts = resolveElementaryTypeCasts()
+    return regular + casts
+  }
+
+  private fun resolveElementaryTypeCasts(): Collection<SolCallable> {
+    return element.elementaryTypeName
+      ?.let {
+        val type = getSolType(it)
+        object : SolCallable {
+          override fun resolveElement(): SolNamedElement? = null
+          override fun parseParameters(): List<Pair<String?, SolType>> = listOf(null to SolUnknown)
+          override fun parseType(): SolType = type
+          override val callablePriority: Int = 1000
+          override fun getName(): String? = null
+        }
+      }
+      .wrap()
+  }
+}
+
+/*
 class SolFunctionCallReference(element: SolFunctionCallExpression) : SolReferenceBase<SolFunctionCallExpression>(element), SolReference {
   override fun calculateDefaultRangeInElement(): TextRange {
     return element.referenceNameElement.parentRelativeRange
@@ -200,3 +281,4 @@ class SolFunctionCallReference(element: SolFunctionCallExpression) : SolReferenc
       .filter { it.canBeApplied(element.functionCallArguments) }
   }
 }
+*/

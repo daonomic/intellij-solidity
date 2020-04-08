@@ -11,10 +11,7 @@ import com.intellij.patterns.PsiElementPattern
 import com.intellij.patterns.StandardPatterns
 import com.intellij.psi.PsiElement
 import com.intellij.util.ProcessingContext
-import me.serce.solidity.lang.psi.SolBlock
-import me.serce.solidity.lang.psi.SolContractDefinition
-import me.serce.solidity.lang.psi.SolMemberAccessExpression
-import me.serce.solidity.lang.psi.SolStatement
+import me.serce.solidity.lang.psi.*
 
 /**
  * Special Variables and Functions
@@ -104,8 +101,8 @@ fun statement(): PsiElementPattern.Capture<PsiElement> = psiElement<PsiElement>(
 fun insideContract(): PsiElementPattern.Capture<PsiElement> = psiElement<PsiElement>()
   .inside(SolContractDefinition::class.java)
 
-fun inMemberAccess(): PsiElementPattern.Capture<PsiElement> = psiElement<PsiElement>()
-  .withParent(SolMemberAccessExpression::class.java)
+fun inDotExpression(): PsiElementPattern.Capture<PsiElement> = psiElement<PsiElement>()
+  .withParent(SolDotExpression::class.java)
 
 private inline fun <reified I : PsiElement> psiElement(): PsiElementPattern.Capture<I> {
   return psiElement(I::class.java)

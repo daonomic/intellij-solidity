@@ -1,6 +1,6 @@
 package me.serce.solidity.lang.core.resolve
 
-import me.serce.solidity.lang.psi.SolFunctionCallExpression
+import me.serce.solidity.lang.psi.SolCallExpression
 import me.serce.solidity.lang.psi.SolNamedElement
 
 class SolEventResolveTest : SolResolveTestBase() {
@@ -42,6 +42,6 @@ class SolEventResolveTest : SolResolveTestBase() {
   """)
 
   override fun checkByCode(code: String) {
-    checkByCodeInternal<SolFunctionCallExpression, SolNamedElement>(code)
+    checkByCodeInternal<SolCallExpression, SolNamedElement>(code)
   }
 }

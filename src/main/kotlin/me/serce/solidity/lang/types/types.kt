@@ -33,8 +33,8 @@ interface SolMember {
 
 interface SolType {
   fun isAssignableFrom(other: SolType): Boolean
-  fun getMembers(project: Project): List<SolMember> {
-    return emptyList()
+  fun getMembers(project: Project): Sequence<SolMember> {
+    return emptySequence()
   }
 }
 
@@ -71,8 +71,8 @@ object SolAddress : SolPrimitiveType {
 
   override fun toString() = "address"
 
-  override fun getMembers(project: Project): List<SolMember> {
-    return SolInternalTypeFactory.of(project).addressType.ref.functionDefinitionList
+  override fun getMembers(project: Project): Sequence<SolMember> {
+    return SolInternalTypeFactory.of(project).addressType.ref.functionDefinitionList.asSequence()
   }
 }
 
@@ -195,7 +195,7 @@ data class SolContract(val ref: SolContractDefinition) : SolType, Linearizable<S
       else -> false
     }
 
-  override fun getMembers(project: Project): List<SolMember> {
+  override fun getMembers(project: Project): Sequence<SolMember> {
     return SolResolver.resolveContractMembers(ref, false)
   }
 
@@ -208,8 +208,8 @@ data class SolStruct(val ref: SolStructDefinition) : SolType {
 
   override fun toString() = ref.name ?: ref.text ?: "$ref"
 
-  override fun getMembers(project: Project): List<SolMember> {
-    return ref.variableDeclarationList
+  override fun getMembers(project: Project): Sequence<SolMember> {
+    return ref.variableDeclarationList.asSequence()
       .map { SolStructVariableDeclaration(it) }
   }
 }
@@ -232,8 +232,8 @@ data class SolEnum(val ref: SolEnumDefinition) : SolType {
 
   override fun toString() = ref.name ?: ref.text ?: "$ref"
 
-  override fun getMembers(project: Project): List<SolMember> {
-    return ref.enumValueList
+  override fun getMembers(project: Project): Sequence<SolMember> {
+    return ref.enumValueList.asSequence()
   }
 }
 
@@ -297,9 +297,10 @@ sealed class SolArray(val type: SolType) : SolType {
       return type.hashCode()
     }
 
-    override fun getMembers(project: Project): List<SolMember> {
+    override fun getMembers(project: Project): Sequence<SolMember> {
       return SolInternalTypeFactory.of(project).arrayType.ref
         .functionDefinitionList
+        .asSequence()
         .map {
           val parameters = it.parseParameters()
             .map { pair -> pair.first to type }
@@ -348,7 +349,7 @@ class BuiltinType(
   private val members: List<SolMember>
 ) : SolType {
   override fun isAssignableFrom(other: SolType): Boolean = false
-  override fun getMembers(project: Project): List<SolMember> = members
+  override fun getMembers(project: Project): Sequence<SolMember> = members.asSequence()
   override fun toString(): String = name
 }
 

@@ -68,13 +68,13 @@ object SolCompleter {
       .createVarLookups()
   }
 
-  fun completeMemberAccess(element: SolMemberAccessExpression): Array<out LookupElement> {
+  fun completeMemberAccess(element: SolDotExpression): Array<out LookupElement> {
     val expr = element.expression
     val contextType = when {
       expr is SolPrimaryExpression && expr.varLiteral?.name == "super" -> ContextType.SUPER
       else -> ContextType.EXTERNAL
     }
-    return element.expression.getMembers()
+    return SolResolver.resolveMembers(element.expression)
       .mapNotNull {
         when (it.getPossibleUsage(contextType)) {
           Usage.CALLABLE -> (it as SolCallableElement).toFunctionLookup()
@@ -88,6 +88,7 @@ object SolCompleter {
         }
       }
       .distinctBy { it.lookupString }
+      .toList()
       .toTypedArray()
   }
 

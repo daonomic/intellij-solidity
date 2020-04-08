@@ -38,7 +38,7 @@ private fun SolFunctionDefinition.inspectReturns(holder: ProblemsHolder) {
   }
 }
 
-private val SolFunctionCallExpression.revert: Boolean
+private val SolCallExpression.revert: Boolean
   get() {
     return if (this.name == "revert") {
       val ref = this.reference?.resolve()
@@ -60,7 +60,7 @@ private fun SolStatement.hasAssignment(el: SolNamedElement): Boolean {
   this.expression?.let {
     if (it is SolAssignmentExpression) {
       return it.expressionList[0].isReferenceTo(el)
-    } else if (it is SolFunctionCallExpression && it.revert) {
+    } else if (it is SolCallExpression && it.revert) {
       return true
     }
   }
@@ -112,7 +112,7 @@ private fun SolExpression.isReferenceTo(el: SolNamedElement): Boolean {
 private val SolStatement.returns: Boolean
   get() {
     this.expression?.let {
-      if (it is SolFunctionCallExpression && it.revert) {
+      if (it is SolCallExpression && it.revert) {
         return true
       }
     }

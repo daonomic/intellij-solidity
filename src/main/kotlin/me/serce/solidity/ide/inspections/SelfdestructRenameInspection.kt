@@ -6,6 +6,7 @@ import com.intellij.codeInspection.ProblemsHolder
 import com.intellij.psi.PsiElementVisitor
 import me.serce.solidity.ide.inspections.fixes.RenameFix
 import me.serce.solidity.lang.psi.SolCallExpression
+import me.serce.solidity.lang.psi.SolPrimaryExpression
 import me.serce.solidity.lang.psi.SolVisitor
 
 class SelfdestructRenameInspection : LocalInspectionTool() {
@@ -18,8 +19,8 @@ class SelfdestructRenameInspection : LocalInspectionTool() {
   }
 
   private fun inspectCall(expr: SolCallExpression, holder: ProblemsHolder) {
-    val name = expr.referenceName
-    if (name == "suicide") {
+    val base = expr.expression
+    if (base is SolPrimaryExpression && base.varLiteral != null && base.text == "suicide") {
       holder.registerProblem(expr, "suicide is deprecated. rename to selfdestruct. EIP 6",
         RenameFix(expr, "selfdestruct"))
     }

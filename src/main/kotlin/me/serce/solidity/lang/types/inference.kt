@@ -8,8 +8,6 @@ import com.intellij.psi.util.PsiModificationTracker
 import me.serce.solidity.firstOrElse
 import me.serce.solidity.lang.psi.*
 import me.serce.solidity.lang.resolve.SolResolver
-import me.serce.solidity.lang.resolve.canBeApplied
-import me.serce.solidity.lang.resolve.ref.SolCallExpressionReference
 import me.serce.solidity.lang.resolve.ref.SolDotExpressionReference
 import me.serce.solidity.lang.types.SolArray.SolDynamicArray
 import me.serce.solidity.lang.types.SolArray.SolStaticArray
@@ -23,6 +21,9 @@ fun getSolType(type: SolTypeName?): SolType {
       } else {
         SolFixedBytes.parse(type.bytesNumType.text)
       }
+    }
+    is SolFunctionTypeName -> {
+      SolFunction(type)
     }
     is SolElementaryTypeName -> {
       when (val text = type.firstChild.text) {
@@ -166,11 +167,26 @@ fun inferExprType(expr: SolExpression?): SolType {
       inferExprType(expr.expressionList[1])
     )
     is SolCallExpression -> {
-      (expr.reference as SolCallExpressionReference)
-        .resolveFunctionCall()
-        .firstOrNull { it.canBeApplied(expr.functionCallArguments?.expressionList ?: emptyList()) }
-        ?.parseType()
-        ?: SolUnknown
+      val baseExpr = expr.expression
+      if (baseExpr is SolPrimaryExpression) {
+        val type = baseExpr.varLiteral
+          ?.let { SolResolver.resolveVarLiteral(it).asSequence() }
+          ?.filterIsInstance<SolCallable>()
+          ?.mapNotNull { it.parseType() }
+          ?.first()
+        if (type is SolFunction) {
+          type.parseType()
+        } else {
+          type ?: SolUnknown
+        }
+      } else {
+        val infered = inferExprType(baseExpr)
+        if (infered is SolFunction) {
+          infered.parseType()
+        } else {
+          SolUnknown
+        }
+      }
     }
     is SolDotExpression -> {
       (expr.reference as SolDotExpressionReference)

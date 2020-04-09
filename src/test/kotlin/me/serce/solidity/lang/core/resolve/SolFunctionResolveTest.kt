@@ -54,7 +54,7 @@ class SolFunctionResolveTest : SolResolveTestBase() {
   """)
 
   fun testResolveGlobal() {
-    val (refElement, _) = resolveInCode<SolCallExpression>("""
+    val (refElement, _) = resolveInCode<SolVarLiteral>("""
         contract B {
             function doit() {
                 assert(true);
@@ -172,6 +172,6 @@ class SolFunctionResolveTest : SolResolveTestBase() {
   """)
 
   override fun checkByCode(@Language("Solidity") code: String) {
-    checkByCodeInternal<SolCallExpression, SolNamedElement>(code)
+    checkByCodeInternal<SolVarLiteral, SolNamedElement>(code)
   }
 }

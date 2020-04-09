@@ -138,8 +138,9 @@ Solidity File
             PsiElement(=)('=')
             PsiWhiteSpace(' ')
             SolCallExpressionImpl(CALL_EXPRESSION)
-              SolVarLiteralImpl(VAR_LITERAL)
-                PsiElement(Identifier)('du')
+              SolPrimaryExpressionImpl(PRIMARY_EXPRESSION)
+                SolVarLiteralImpl(VAR_LITERAL)
+                  PsiElement(Identifier)('du')
               SolOptionalCallParamsImpl(OPTIONAL_CALL_PARAMS)
                 <empty list>
               PsiElement(()('(')

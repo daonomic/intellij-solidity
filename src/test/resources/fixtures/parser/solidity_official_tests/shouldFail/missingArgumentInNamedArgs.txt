@@ -133,8 +133,9 @@ Solidity File
             PsiElement(=)('=')
             PsiWhiteSpace(' ')
             SolCallExpressionImpl(CALL_EXPRESSION)
-              SolVarLiteralImpl(VAR_LITERAL)
-                PsiElement(Identifier)('a')
+              SolPrimaryExpressionImpl(PRIMARY_EXPRESSION)
+                SolVarLiteralImpl(VAR_LITERAL)
+                  PsiElement(Identifier)('a')
               SolOptionalCallParamsImpl(OPTIONAL_CALL_PARAMS)
                 <empty list>
               PsiElement(()('(')
@@ -143,21 +144,21 @@ Solidity File
                   PsiElement({)('{')
                   PsiElement(Identifier)('a')
                   PsiElement(:)(':')
-                  PsiErrorElement:<expression> expected, got ','
+                  PsiErrorElement:<expression> or <primary expression> expected, got ','
                     <empty list>
                   PsiWhiteSpace(' ')
                   PsiElement(,)(',')
                   PsiWhiteSpace(' ')
                   PsiElement(Identifier)('b')
                   PsiElement(:)(':')
-                  PsiErrorElement:<expression> expected, got ','
+                  PsiErrorElement:<expression> or <primary expression> expected, got ','
                     <empty list>
                   PsiWhiteSpace(' ')
                   PsiElement(,)(',')
                   PsiWhiteSpace(' ')
                   PsiElement(Identifier)('c')
                   PsiElement(:)(':')
-                  PsiErrorElement:<expression> expected, got '}'
+                  PsiErrorElement:<expression> or <primary expression> expected, got '}'
                     <empty list>
                   PsiWhiteSpace(' ')
                   PsiElement(})('}')

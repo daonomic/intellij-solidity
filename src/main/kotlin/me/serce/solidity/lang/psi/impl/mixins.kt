@@ -347,15 +347,6 @@ abstract class SolDotExpressionMixin(node: ASTNode) : SolNamedElementImpl(node),
   override fun getReference() = SolDotExpressionReference(this)
 }
 
-abstract class SolCallExpressionMixin(node: ASTNode) : SolNamedElementImpl(node), SolCallExpression {
-  override val referenceNameElement: PsiElement
-    get() = (varLiteral ?: elementaryTypeName)!!
-  override val referenceName: String
-    get() = referenceNameElement.text
-
-  override fun getReference() = SolCallExpressionReference(this)
-}
-
 abstract class SolNewExpressionElement(node: ASTNode) : SolNamedElementImpl(node), SolNewExpression {
   override val referenceNameElement: PsiElement
     get() = findChildByType(IDENTIFIER) ?: firstChild

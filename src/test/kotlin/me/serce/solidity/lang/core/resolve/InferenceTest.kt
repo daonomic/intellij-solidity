@@ -54,6 +54,32 @@ class InferenceTest : SolResolveTestBase() {
         }""")
   }
 
+  fun testFunctionType() {
+    checkType(SolString, """
+        contract Contract {
+            function (uint) pure returns (string) f;
+        
+            function test() {
+                var test = f(0);
+                test;
+               //^
+            }
+        }""")
+  }
+
+  fun testFunctionType2() {
+    checkType(SolString, """
+        contract Contract {
+            mapping(uint => function (uint) pure returns (string)) fs;
+        
+            function test() {
+                var test = fs[1](0);
+                test;
+               //^
+            }
+        }""")
+  }
+
   fun testStorageStruct() {
     InlineFile(
       code = """

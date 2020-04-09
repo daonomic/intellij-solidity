@@ -125,35 +125,7 @@ object SolResolver {
   ).filterIsInstance<SolModifierDefinition>()
     .toList()
 
-  fun resolveVarLiteralReference(element: SolNamedElement): List<SolNamedElement> {
-    val parent = element.parent
-    return if (parent is SolCallExpression) {
-      val resolved = parent.reference?.multiResolve() ?: emptyList()
-      if (resolved.isNotEmpty()) {
-        resolved.filterIsInstance<SolNamedElement>()
-      } else {
-        resolveVarLiteral(element)
-      }
-    } else {
-      resolveVarLiteral(element)
-        .findBest {
-          when (it) {
-            is SolStateVariableDeclaration -> 0
-            else -> Int.MAX_VALUE
-          }
-        }
-    }
-  }
-
-  private fun <T : Any> List<T>.findBest(priorities: (T) -> Int): List<T> {
-    return this
-      .groupBy { priorities(it) }
-      .minBy { it.key }
-      ?.value
-      ?: emptyList()
-  }
-
-  fun resolveVarLiteral(element: SolNamedElement): List<SolNamedElement> {
+  fun resolveVarLiteral(element: SolVarLiteral): List<SolNamedElement> {
     return when (element.name) {
       "this" -> element.findContract()
         .wrap()
@@ -161,9 +133,27 @@ object SolResolver {
         ?.supers
         ?.flatMap { resolveTypeNameUsingImports(it) }
         ?: emptyList()
-      else -> lexicalDeclarations(element)
-        .filter { it.name == element.name }
-        .toList()
+      else -> {
+        val byName = lexicalDeclarations(element)
+          .filter { it.name == element.name }
+          .toList()
+        val parent = element.parent?.parent
+        if (parent is SolCallExpression) {
+          val calls = byName.asSequence()
+            .filter { it !is SolStateVariableDeclaration }
+            .filterIsInstance<SolCallable>()
+            .filter { it.canBeApplied(parent.functionCallArguments?.expressionList ?: emptyList()) }
+            .mapNotNull { it.resolveElement() }
+            .toList()
+          if (calls.size == 1) {
+            calls
+          } else {
+            byName
+          }
+        } else {
+          byName
+        }
+      }
     }
   }
 

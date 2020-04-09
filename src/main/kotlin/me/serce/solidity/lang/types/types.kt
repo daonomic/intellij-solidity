@@ -202,6 +202,19 @@ data class SolContract(val ref: SolContractDefinition) : SolType, Linearizable<S
   override fun toString() = ref.name ?: ref.text ?: "$ref"
 }
 
+data class SolFunction(val ref: SolFunctionTypeName) : SolType {
+  override fun isAssignableFrom(other: SolType): Boolean = other == this
+
+  fun parseType(): SolType {
+    val types = ref.parameterListList[1].parameterDefList.map { getSolType(it.typeName) }
+    return if (types.size == 1) {
+      types[0]
+    } else {
+      SolTuple(types)
+    }
+  }
+}
+
 data class SolStruct(val ref: SolStructDefinition) : SolType {
   override fun isAssignableFrom(other: SolType): Boolean =
     other is SolStruct && ref == other.ref

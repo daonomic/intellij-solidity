@@ -417,11 +417,8 @@ DotExpression ::= Expression '.' MemberFunctionCallOrStateVar {
 		implements = "me.serce.solidity.lang.psi.SolReferenceElement"
 		mixin = "me.serce.solidity.lang.psi.impl.SolDotExpressionMixin"
 }
-private CallExpressionBase ::= VarLiteral | ElementaryTypeNameExpression
-CallExpression ::= CallExpressionBase OptionalCallParams '(' FunctionCallArguments? ')' {
+CallExpression ::= Expression OptionalCallParams '(' FunctionCallArguments? ')' {
 		pin = 3
-		implements = "me.serce.solidity.lang.psi.SolReferenceElement"
-		mixin = "me.serce.solidity.lang.psi.impl.SolCallExpressionMixin"
 }
 
 FunctionCallArguments ::= MapExpression | Expression? ( ',' Expression )*

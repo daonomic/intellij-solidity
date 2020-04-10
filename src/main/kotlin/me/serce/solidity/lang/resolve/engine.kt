@@ -151,7 +151,13 @@ object SolResolver {
             byName
           }
         } else {
-          byName
+          val notFunctions = byName
+            .filter { it !is SolFunctionDefinition }
+          if (notFunctions.size == 1) {
+            notFunctions
+          } else {
+            byName
+          }
         }
       }
     }

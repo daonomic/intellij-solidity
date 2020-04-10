@@ -31,8 +31,12 @@ Solidity File
             SolPrimaryExpressionImpl(PRIMARY_EXPRESSION)
               SolNumberLiteralImpl(NUMBER_LITERAL)
                 PsiElement(fixedNumber)('1.0')
-          PsiErrorElement:'(', '.' or <number unit> expected, got 'x2'
-            PsiElement(Identifier)('x2')
+          PsiErrorElement:'(', '.', ';' or <number unit> expected, got 'x2'
+            <empty list>
+        SolStatementImpl(STATEMENT)
+          SolPrimaryExpressionImpl(PRIMARY_EXPRESSION)
+            SolVarLiteralImpl(VAR_LITERAL)
+              PsiElement(Identifier)('x2')
           PsiElement(;)(';')
         PsiWhiteSpace('\n  ')
         PsiElement(})('}')

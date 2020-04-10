@@ -39,7 +39,5 @@ class SolKeywordCompletionContributor : CompletionContributor(), DumbAware {
         result.addElement(PrioritizedLookupElement.withPriority(pragmaBuilder, KEYWORD_PRIORITY - 5))
       }
     })
-
-    extend(CompletionType.BASIC, insideContract().andNot(inDotExpression()), SolKeywordCompletionProvider("this"))
   }
 }

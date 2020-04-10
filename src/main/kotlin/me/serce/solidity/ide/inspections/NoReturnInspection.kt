@@ -139,7 +139,7 @@ private val SolStatement.returns: Boolean
       return true
     }
 
-    if (this.returnTupleStatement != null) {
+    if (this.returnTupleSt != null) {
       return true
     }
 

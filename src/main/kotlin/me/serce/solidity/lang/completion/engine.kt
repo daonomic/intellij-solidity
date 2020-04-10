@@ -64,8 +64,25 @@ object SolCompleter {
   }
 
   fun completeLiteral(element: PsiElement): Sequence<LookupElement> {
-    return SolResolver.lexicalDeclarations(element)
-      .createVarLookups()
+    val declarations =  SolResolver.lexicalDeclarations(element)
+      .mapNotNull {
+        if (it is SolFunctionDefinition)
+          it.toFunctionLookup()
+        else
+          it.toVarLookup()
+      }
+    val contract = element.findContract()
+    val addons = if (contract != null) {
+      val thisLookup = LookupElementBuilder.create("this").keywordPrioritised()
+      if (contract.supers.isNotEmpty()) {
+        sequenceOf(thisLookup, LookupElementBuilder.create("super").keywordPrioritised())
+      } else {
+        sequenceOf(thisLookup)
+      }
+    } else {
+      emptySequence()
+    }
+    return sequenceOf(addons, declarations).flatten()
   }
 
   fun completeMemberAccess(element: SolDotExpression): Array<out LookupElement> {
@@ -92,14 +109,11 @@ object SolCompleter {
       .toTypedArray()
   }
 
-  private fun Sequence<SolNamedElement>.createVarLookups(): Sequence<LookupElement> = createVarLookups(SolidityIcons.STATE_VAR)
-
-  private fun Sequence<SolNamedElement>.createVarLookups(icon: Icon): Sequence<LookupElement> = map {
+  private fun SolNamedElement.toVarLookup(icon: Icon = SolidityIcons.STATE_VAR): LookupElement =
     PrioritizedLookupElement.withPriority(
-      LookupElementBuilder.create(it.name ?: "").withIcon(icon),
+      LookupElementBuilder.create(name ?: "").withIcon(icon),
       TYPED_COMPLETION_PRIORITY
     )
-  }
 }
 
 class ContractLookupElement(val contract: SolContractDefinition) : LookupElement() {

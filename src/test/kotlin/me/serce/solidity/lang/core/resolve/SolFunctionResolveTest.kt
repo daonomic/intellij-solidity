@@ -25,7 +25,6 @@ class SolFunctionResolveTest : SolResolveTestBase() {
                     //x
             }
 
-
             function doit() {
                 doit2(1, 2);
                 //^

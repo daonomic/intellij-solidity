@@ -29,15 +29,10 @@ Solidity File
       SolBlockImpl(BLOCK)
         PsiElement({)('{')
         PsiWhiteSpace('\n    ')
-        SolStatementImpl(STATEMENT)
-          SolPrimaryExpressionImpl(PRIMARY_EXPRESSION)
-            SolElementaryTypeNameImpl(ELEMENTARY_TYPE_NAME)
-              SolNumberTypeImpl(NUMBER_TYPE)
-                PsiElement(uIntNumType)('uint')
-          PsiErrorElement:'(', '.', ';', <storage location> or Identifier expected, got 'constant'
-            <empty list>
+        PsiElement(uIntNumType)('uint')
         PsiWhiteSpace(' ')
-        PsiElement(constant)('constant')
+        PsiErrorElement:<storage location> or Identifier expected, got 'constant'
+          PsiElement(constant)('constant')
         PsiWhiteSpace(' ')
         PsiElement(Identifier)('local')
         PsiWhiteSpace(' ')

@@ -151,8 +151,10 @@ fun inferExprType(expr: SolExpression?): SolType {
         ?: expr.booleanLiteral?.let { SolBoolean }
         ?: expr.stringLiteral?.let { SolString }
         ?: expr.numberLiteral?.let { SolInteger.inferType(it) }
-        ?: expr.elementaryTypeName?.let { getSolType(it) }
         ?: SolUnknown
+    }
+    is SolElementaryCastExpression -> {
+      getSolType(expr.typeName)
     }
     is SolPlusMinExpression -> getNumericExpressionType(
       inferExprType(expr.expressionList[0]),

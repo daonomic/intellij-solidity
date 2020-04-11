@@ -54,6 +54,17 @@ class InferenceTest : SolResolveTestBase() {
         }""")
   }
 
+  fun testCastBytes() {
+    checkType(SolBytes, """
+        contract Contract {
+            function test() {
+                var test = bytes(this);
+                test;
+               //^
+            }
+        }""")
+  }
+
   fun testFunctionType() {
     checkType(SolString, """
         contract Contract {

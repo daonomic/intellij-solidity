@@ -257,11 +257,12 @@ TypedDeclarationItem ::= (TypeName StorageLocation?)? Identifier ','? | ',' {
 }
 TypedDeclarationList ::= '(' TypedDeclarationItem*  ')' ;
 // TODO: remove storage declaration from all other places
+private TypedVariableDeclaration ::= TypeName !('(') StorageLocation? Identifier {pin=2}
 VariableDeclaration ::=
     var DeclarationList |
     DeclarationList |
     TypedDeclarationList |
-    TypeName StorageLocation? Identifier {
+    TypedVariableDeclaration {
     implements = "me.serce.solidity.lang.psi.SolNamedElement"
     mixin = "me.serce.solidity.lang.psi.impl.SolVariableDeclarationMixin"
 }
@@ -372,6 +373,7 @@ private HighestPriorityGroup ::= IncrementExpression
                       | NewExpression
                       | IndexAccessExpression
 										  | CallExpression
+										  | ElementaryCastExpression
   										| DotExpression
                       | ParenExpression
 
@@ -399,7 +401,6 @@ PrimaryExpression ::= VarLiteral
                   | NumberLiteral
                   | HexLiteral
                   | StringLiteral
-                  | ElementaryTypeNameExpression
 
 VarLiteral ::= Identifier {
     implements = "me.serce.solidity.lang.psi.SolReferenceElement"
@@ -416,6 +417,9 @@ DotExpression ::= Expression '.' MemberFunctionCallOrStateVar {
 }
 CallExpression ::= Expression OptionalCallParams '(' FunctionCallArguments? ')' {
 		pin = 3
+}
+ElementaryCastExpression ::= (ElementaryTypeName | BytesArrayTypeName) '(' Expression ')' {
+		pin = 2
 }
 
 FunctionCallArguments ::= MapExpression | Expression? ( ',' Expression )*
@@ -445,8 +449,6 @@ private DecimalNumber ::= decimalNumber
 private ScientificNumber ::= scientificNumber
 
 private PrimitiveLiteral ::= intNumType | uIntNumType | byteNumType | bytesNumType | fixedNumType | uFixedNumType | booleanLiteral | ( address payable ) | address | string | bool
-
-private ElementaryTypeNameExpression ::= ElementaryTypeName
 
 ElementaryTypeName ::= ( address payable ) | address | bool | string | var | NumberType {
     stubClass = "me.serce.solidity.lang.stubs.SolTypeRefStub"

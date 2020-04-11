@@ -5,14 +5,10 @@ Solidity File
     PsiElement(Identifier)('test')
     PsiWhiteSpace(' ')
     PsiElement({)('{')
-  PsiErrorElement:<expression>, <type name>, constructor, contract, enum, event, function, import, intNumType, interface, library, modifier, pragma, struct, uIntNumType, using or '}' expected, got 'uint256'
-    <empty list>
   PsiWhiteSpace('\n  ')
-  SolPrimaryExpressionImpl(PRIMARY_EXPRESSION)
-    SolElementaryTypeNameImpl(ELEMENTARY_TYPE_NAME)
-      SolNumberTypeImpl(NUMBER_TYPE)
-        PsiElement(uIntNumType)('uint256')
+  PsiElement(uIntNumType)('uint256')
   PsiWhiteSpace(' ')
-  PsiElement(;)(';')
+  PsiErrorElement:<visibility modifier>, Identifier or constant expected, got ';'
+    PsiElement(;)(';')
   PsiWhiteSpace('\n')
   PsiElement(})('}')

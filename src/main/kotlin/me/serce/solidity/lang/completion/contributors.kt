@@ -5,6 +5,7 @@ import com.intellij.codeInsight.lookup.LookupElement
 import com.intellij.codeInsight.lookup.LookupElementBuilder
 import com.intellij.openapi.editor.EditorModificationUtil
 import com.intellij.openapi.project.DumbAware
+import com.intellij.openapi.util.TextRange
 import com.intellij.patterns.ElementPattern
 import com.intellij.patterns.PlatformPatterns.psiElement
 import com.intellij.patterns.PsiElementPattern
@@ -104,6 +105,8 @@ private inline fun <reified I : PsiElement> psiElement(): PsiElementPattern.Capt
 fun LookupElementBuilder.keywordPrioritised(): LookupElement = PrioritizedLookupElement.withPriority(this, KEYWORD_PRIORITY)
 
 fun LookupElementBuilder.insertParenthesis(finish: Boolean): LookupElementBuilder = this.withInsertHandler { ctx, _ ->
-  ctx.document.insertString(ctx.selectionEndOffset, if (finish) "();" else "()")
+  if (ctx.document.getText(TextRange(ctx.selectionEndOffset, ctx.selectionEndOffset + 1)) != "(") {
+    ctx.document.insertString(ctx.selectionEndOffset, if (finish) "();" else "()")
+  }
   EditorModificationUtil.moveCaretRelatively(ctx.editor, 1)
 }

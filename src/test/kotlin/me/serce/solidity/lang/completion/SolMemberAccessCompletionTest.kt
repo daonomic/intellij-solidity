@@ -16,6 +16,21 @@ class SolMemberAccessCompletionTest : SolCompletionTestBase() {
         }
   """)
 
+  fun testLibraryCompletion() = checkCompletion(hashSetOf("doSmth1", "doSmth2"), """
+        library Library {
+            function doSmth1(address) internal;
+            function doSmth2(address) internal;
+        }
+        
+        contract Test {
+            using Library for address;
+        
+            function doSmth(address a) {
+                a.doS/*caret*/
+            }
+        }
+  """)
+
   fun testFunctionCompletion() = checkCompletion(hashSetOf("doSmth3"), """
         contract SomeContract {
             function doSmth() public {

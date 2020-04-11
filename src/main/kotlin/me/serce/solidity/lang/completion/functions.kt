@@ -119,12 +119,13 @@ object FunctionCompletionProvider : CompletionProvider<CompletionParameters>() {
 fun List<SolFunctionDefinition>.toFunctionLookups() =
   this.mapNotNull { it.toFunctionLookup() }
 
-fun SolCallableElement.toFunctionLookup(): LookupElementBuilder? {
-  return if (name == null) {
+fun SolCallable.toFunctionLookup(): LookupElementBuilder? {
+  val elem = resolveElement()
+  return if (elem?.name == null) {
     null
   } else {
     LookupElementBuilder
-      .create(this)
+      .create(elem)
       .withBoldness(true)
       .withIcon(SolidityIcons.FUNCTION)
       .withTypeText(funcOutType(this))
@@ -133,13 +134,13 @@ fun SolCallableElement.toFunctionLookup(): LookupElementBuilder? {
   }
 }
 
-private fun funcOutType(elem: SolCallableElement): String {
-  val type = elem.parseType()
+private fun funcOutType(callable: SolCallable): String {
+  val type = callable.parseType()
   return type.toString()
 }
 
-private fun funcInType(elem: SolCallableElement): String {
-  val params = elem.parseParameters()
+private fun funcInType(callable: SolCallable): String {
+  val params = callable.parseParameters()
   val joinedParams = params.joinToString { formatParam(it) }
   return "($joinedParams)"
 }

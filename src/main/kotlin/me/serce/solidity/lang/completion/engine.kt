@@ -94,7 +94,7 @@ object SolCompleter {
     return SolResolver.resolveMembers(element.expression)
       .mapNotNull {
         when (it.getPossibleUsage(contextType)) {
-          Usage.CALLABLE -> (it as SolCallableElement).toFunctionLookup()
+          Usage.CALLABLE -> (it as SolCallable).toFunctionLookup()
           Usage.VARIABLE -> it.getName()?.let { name ->
             PrioritizedLookupElement.withPriority(
               LookupElementBuilder.create(name).withIcon(SolidityIcons.STATE_VAR),

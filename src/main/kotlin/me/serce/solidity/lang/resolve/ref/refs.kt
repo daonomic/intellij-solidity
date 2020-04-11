@@ -6,6 +6,7 @@ import me.serce.solidity.lang.completion.SolCompleter
 import me.serce.solidity.lang.psi.*
 import me.serce.solidity.lang.resolve.SolResolver
 import me.serce.solidity.lang.resolve.canBeApplied
+import me.serce.solidity.lang.resolve.toSignature
 import me.serce.solidity.lang.types.ContextType
 import me.serce.solidity.lang.types.SolMember
 import me.serce.solidity.lang.types.Usage
@@ -20,7 +21,9 @@ class SolUserDefinedTypeNameReference(element: SolUserDefinedTypeName) : SolRefe
 class SolVarLiteralReference(element: SolVarLiteral) : SolReferenceBase<SolVarLiteral>(element), SolReference {
   override fun multiResolve() = SolResolver.resolveVarLiteral(element)
 
-  override fun getVariants() = SolCompleter.completeLiteral(element).toList().toTypedArray()
+  override fun getVariants() = SolCompleter.completeLiteral(element)
+    .toList()
+    .toTypedArray()
 }
 
 class SolModifierReference(
@@ -95,11 +98,13 @@ class SolDotExpressionReference(element: SolDotExpression) : SolReferenceBase<So
     }
 
     val byName = SolResolver.resolveMembers(expr)
+      .distinctBy { it.toSignature() }
       .filter { it.getName() == element.name }
+      .toList()
 
     val functionCall = element.memberFunctionCall
     val resolved = if (functionCall != null) {
-      byName
+      byName.asSequence()
         .filter { it.getPossibleUsage(contextType) == Usage.CALLABLE }
         .filterIsInstance<SolCallable>()
         .filter { it.canBeApplied(functionCall.functionCallArguments?.expressionList ?: emptyList()) }
@@ -113,7 +118,7 @@ class SolDotExpressionReference(element: SolDotExpression) : SolReferenceBase<So
     return if (resolved.size == 1) {
       resolved
     } else {
-      byName.toList()
+      byName
     }
   }
 }

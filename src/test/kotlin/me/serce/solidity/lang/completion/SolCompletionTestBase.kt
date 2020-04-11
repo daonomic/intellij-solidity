@@ -4,7 +4,7 @@ import me.serce.solidity.utils.SolTestBase
 import org.intellij.lang.annotations.Language
 
 abstract class SolCompletionTestBase : SolTestBase() {
-  protected fun checkCompletion(required: Set<String>, @Language("Solidity") code: String, strict: Boolean = false) {
+  protected fun checkCompletion(required: Set<String>, @Language("Solidity") code: String, strict: Boolean = false): List<String> {
     InlineFile(code).withCaret()
     val variants = myFixture.completeBasic()
     checkNotNull(variants) {
@@ -14,7 +14,8 @@ abstract class SolCompletionTestBase : SolTestBase() {
     if (strict) {
       assertEquals(required.toHashSet(), result.toHashSet())
     } else {
-      assertTrue("$result doesn't contain $required", result.toHashSet().containsAll(required))
+      assertTrue("$result doesn't contain $required", result.containsAll(required))
     }
+    return result
   }
 }

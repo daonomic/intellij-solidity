@@ -12,6 +12,7 @@ import me.serce.solidity.ide.SolidityIcons
 import me.serce.solidity.ide.inspections.fixes.ImportFileAction
 import me.serce.solidity.lang.psi.*
 import me.serce.solidity.lang.resolve.SolResolver
+import me.serce.solidity.lang.resolve.toSignature
 import me.serce.solidity.lang.stubs.SolEventIndex
 import me.serce.solidity.lang.stubs.SolGotoClassIndex
 import me.serce.solidity.lang.stubs.SolModifierIndex
@@ -65,6 +66,7 @@ object SolCompleter {
 
   fun completeLiteral(element: PsiElement): Sequence<LookupElement> {
     val declarations =  SolResolver.lexicalDeclarations(element)
+      .distinctBy { it.toSignature() }
       .mapNotNull {
         if (it is SolFunctionDefinition)
           it.toFunctionLookup()
@@ -82,7 +84,8 @@ object SolCompleter {
     } else {
       emptySequence()
     }
-    return sequenceOf(addons, declarations).flatten()
+    return sequenceOf(addons, declarations)
+      .flatten()
   }
 
   fun completeMemberAccess(element: SolDotExpression): Array<out LookupElement> {
@@ -92,6 +95,7 @@ object SolCompleter {
       else -> ContextType.EXTERNAL
     }
     return SolResolver.resolveMembers(element.expression)
+      .distinctBy { it.toSignature() }
       .mapNotNull {
         when (it.getPossibleUsage(contextType)) {
           Usage.CALLABLE -> (it as SolCallable).toFunctionLookup()
@@ -104,7 +108,6 @@ object SolCompleter {
           else -> null
         }
       }
-      .distinctBy { it.lookupString }
       .toList()
       .toTypedArray()
   }

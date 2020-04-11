@@ -136,6 +136,7 @@ object SolResolver {
       else -> {
         val byName = lexicalDeclarations(element)
           .filter { it.name == element.name }
+          .distinctBy { it.toSignature() }
           .toList()
         val parent = element.parent?.parent
         if (parent is SolCallExpression) {
@@ -229,12 +230,10 @@ object SolResolver {
       sequenceOf(contract.stateVariableDeclarationList as List<SolMember>, contract.functionDefinitionList).flatten()
     else
       emptySequence()
-    val signatures = members.mapNotNull { it.toSignature() }.toSet()
     return members + contract.supers.asSequence()
       .map { resolveTypeName(it).firstOrNull() }
       .filterIsInstance<SolContractDefinition>()
       .flatMap { resolveContractMembers(it) }
-      .filter { !signatures.contains(it.toSignature()) }
   }
 
   fun lexicalDeclarations(place: PsiElement, stop: (PsiElement) -> Boolean = { false }): Sequence<SolNamedElement> {
@@ -267,14 +266,10 @@ object SolResolver {
           scope.stateVariableDeclarationList,
           scope.functionDefinitionList
         ).flatten()
-        val signatures = childrenScope
-          .mapNotNull { it.toSignature() }
-          .toSet()
         val extendsScope = scope.supers.asSequence()
           .map { resolveTypeName(it).firstOrNull() }
           .filterNotNull()
           .flatMap { lexicalDeclarations(it, place) }
-          .filter { !signatures.contains(it.toSignature()) }
         childrenScope + extendsScope
       }
       is SolFunctionDefinition -> {

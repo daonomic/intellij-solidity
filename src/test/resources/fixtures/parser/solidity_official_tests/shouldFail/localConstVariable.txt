@@ -31,7 +31,7 @@ Solidity File
         PsiWhiteSpace('\n    ')
         PsiElement(uIntNumType)('uint')
         PsiWhiteSpace(' ')
-        PsiErrorElement:<storage location> or Identifier expected, got 'constant'
+        PsiErrorElement:'(', <storage location> or Identifier expected, got 'constant'
           PsiElement(constant)('constant')
         PsiWhiteSpace(' ')
         PsiElement(Identifier)('local')

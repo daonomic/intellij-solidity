@@ -27,9 +27,9 @@ Solidity File
         PsiWhiteSpace(' ')
         PsiElement(=)('=')
         PsiWhiteSpace(' ')
-        PsiErrorElement:'(', <expression> or <primary expression> expected, got 'uint64'
-          PsiElement(uIntNumType)('uint64')
-        PsiElement([)('[')
+        PsiElement(uIntNumType)('uint64')
+        PsiErrorElement:'(' expected, got '['
+          PsiElement([)('[')
         PsiElement(])(']')
         PsiElement(()('(')
         PsiElement(decimalNumber)('3')

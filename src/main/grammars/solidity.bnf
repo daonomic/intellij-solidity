@@ -250,14 +250,14 @@ DeclarationItem ::= Identifier ','? | ',' {
     implements = "me.serce.solidity.lang.psi.SolNamedElement"
     mixin = "me.serce.solidity.lang.psi.impl.SolDeclarationItemMixin"
 }
-DeclarationList ::= '(' DeclarationItem*  ')'
+DeclarationList ::= '(' DeclarationItem* ')'
 TypedDeclarationItem ::= (TypeName StorageLocation?)? Identifier ','? | ',' {
     implements = "me.serce.solidity.lang.psi.SolNamedElement"
     mixin = "me.serce.solidity.lang.psi.impl.SolTypedDeclarationItemMixin"
 }
 TypedDeclarationList ::= '(' TypedDeclarationItem*  ')' ;
 // TODO: remove storage declaration from all other places
-private TypedVariableDeclaration ::= TypeName !('(') StorageLocation? Identifier {pin=2}
+private TypedVariableDeclaration ::= TypeName StorageLocation? Identifier
 VariableDeclaration ::=
     var DeclarationList |
     DeclarationList |

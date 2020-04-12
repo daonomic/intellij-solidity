@@ -323,10 +323,11 @@ private UnfinishedBlock ::= '{' Statement* {
 }
 Block ::= UnfinishedBlock '}'
 
-private UnFinishedStatement ::= DoWhileStatement | PlaceholderStatement | ContinueSt | BreakSt | ReturnSt | ReturnTupleSt | ThrowSt | EmitStatement | SimpleStatement
+private UnFinishedStatement ::= DoWhileStatement | PlaceholderStatement | ContinueSt | BreakSt | ReturnTupleSt | ReturnSt | ThrowSt | EmitStatement | SimpleStatement
 private FinishedStatement ::= UnFinishedStatement ';' {pin = 1}
 Statement ::= IfStatement | WhileStatement | ForStatement | Block | InlineAssemblyStatement | TupleStatement | FinishedStatement
 
+SeqExpression ::= '(' ','? Expression (',' Expression)* ','? ')'
 // intentionally not pinned
 TupleStatement ::= VariableDeclaration '=' SeqExpression ';'
     | SeqExpression '=' SeqExpression ';'
@@ -343,10 +344,10 @@ DoWhileStatement ::= do Statement while '(' Expression ')' {pin=1}
 ContinueSt ::= continue
 BreakSt ::= break
 ReturnSt ::= return Expression? {pin=1}
-ReturnTupleSt ::= return SeqExpression
+private Tuple ::= '(' Expression (',' Expression)+ ')'
+ReturnTupleSt ::= return Tuple
 ThrowSt ::= throw
 EmitStatement ::= emit CallExpression {pin=1}
-SeqExpression ::= '(' ','? Expression (',' Expression)* ','? ')'
 VariableDefinition ::= VariableDeclaration ( '=' Expression )?
 
 // see https://solidity.readthedocs.io/en/v0.4.21/miscellaneous.html#order-of-precedence-of-operators
@@ -372,6 +373,7 @@ Expression ::=
 private HighestPriorityGroup ::= IncrementExpression
                       | NewExpression
                       | IndexAccessExpression
+                      | AbiDecodeExpression
 										  | CallExpression
 										  | ElementaryCastExpression
   										| DotExpression
@@ -415,12 +417,11 @@ DotExpression ::= Expression '.' MemberFunctionCallOrStateVar {
 		implements = "me.serce.solidity.lang.psi.SolReferenceElement"
 		mixin = "me.serce.solidity.lang.psi.impl.SolDotExpressionMixin"
 }
-CallExpression ::= Expression OptionalCallParams '(' FunctionCallArguments? ')' {
-		pin = 3
-}
-ElementaryCastExpression ::= (ElementaryTypeName | BytesArrayTypeName) '(' Expression ')' {
-		pin = 2
-}
+CallExpression ::= Expression OptionalCallParams '(' FunctionCallArguments? ')' {pin=3}
+private SimpleType ::= ElementaryTypeName | BytesArrayTypeName
+ElementaryCastExpression ::= SimpleType '(' Expression ')' {pin=2}
+SimpleTypes ::= SimpleType (',' SimpleType)*
+AbiDecodeExpression ::= 'abi.decode' '(' Expression ',' '(' SimpleTypes ')' ')' {pin=2}
 
 FunctionCallArguments ::= MapExpression | Expression? ( ',' Expression )*
 private MapExpressionClause ::= Identifier ':' Expression {pin=2}

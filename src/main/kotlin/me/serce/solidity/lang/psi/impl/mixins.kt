@@ -13,6 +13,7 @@ import me.serce.solidity.lang.core.SolidityTokenTypes.*
 import me.serce.solidity.lang.psi.*
 import me.serce.solidity.lang.resolve.SolResolver
 import me.serce.solidity.lang.resolve.ref.*
+import me.serce.solidity.lang.resolve.toSignature
 import me.serce.solidity.lang.stubs.*
 import me.serce.solidity.lang.types.*
 import java.util.*
@@ -334,6 +335,34 @@ abstract class SolUserDefinedTypeNameImplMixin : SolStubbedElementImpl<SolTypeRe
   override fun setName(name: String): SolUserDefinedTypeNameImplMixin {
     referenceNameElement.replace(SolPsiFactory(project).createIdentifier(name))
     return this
+  }
+}
+
+abstract class SolMemberFunctionCallMixin(node: ASTNode) : SolElementImpl(node), SolMemberFunctionCall {
+  override fun resolveCallables(): Sequence<SolCallable> {
+    val dotExpr = findParent<SolDotExpression>()
+    val expr = dotExpr.expression
+
+    return SolResolver.resolveMembers(expr)
+      .distinctBy { it.toSignature() }
+      .filter { it.getName() == dotExpr.name }
+      .filterIsInstance<SolCallable>()
+  }
+}
+
+abstract class SolCallExpressionMixin(node: ASTNode) : SolElementImpl(node), SolCallExpression {
+  override fun resolveCallables(): Sequence<SolCallable> {
+    val expr = expression
+    return if (expr is SolPrimaryExpression) {
+      expr.varLiteral?.let { vl ->
+        SolResolver.lexicalDeclarations(vl)
+          .filter { it.name == vl.name }
+          .distinctBy { it.toSignature() }
+          .filterIsInstance<SolCallable>()
+      } ?: emptySequence()
+    } else {
+      emptySequence()
+    }
   }
 }
 

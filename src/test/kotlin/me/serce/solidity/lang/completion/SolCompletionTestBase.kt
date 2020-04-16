@@ -4,7 +4,11 @@ import me.serce.solidity.utils.SolTestBase
 import org.intellij.lang.annotations.Language
 
 abstract class SolCompletionTestBase : SolTestBase() {
-  protected fun checkCompletion(required: Set<String>, @Language("Solidity") code: String, strict: Boolean = false): List<String> {
+  protected fun checkCompletion(required: Set<String>, @Language("Solidity") code: String, strict: Boolean = false) {
+    checkCompletionAndReturn(required, code, strict)
+  }
+
+  protected fun checkCompletionAndReturn(required: Set<String>, @Language("Solidity") code: String, strict: Boolean = false): List<String> {
     InlineFile(code).withCaret()
     val variants = myFixture.completeBasic()
     checkNotNull(variants) {

@@ -54,7 +54,7 @@ class SolFunctionsCompletionTest : SolCompletionTestBase() {
   }
 
   fun testFuncNameInheritance() {
-    val result = checkCompletion(
+    val result = checkCompletionAndReturn(
       hashSetOf("f_1", "f_2"), """
         interface Interface {
           function f_1();

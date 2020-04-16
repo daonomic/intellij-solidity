@@ -45,7 +45,7 @@ Solidity File
             SolStatementImpl(STATEMENT)
               SolPlaceholderStatementImpl(PLACEHOLDER_STATEMENT)
                 PsiElement(Identifier)('_')
-              PsiElement(;)(';')
+                PsiElement(;)(';')
         PsiWhiteSpace(' ')
         PsiElement(})('}')
     PsiWhiteSpace('\n')

@@ -109,10 +109,9 @@ Solidity File
                   PsiElement(Identifier)('f')
               SolOptionalCallParamsImpl(OPTIONAL_CALL_PARAMS)
                 <empty list>
-              PsiElement(()('(')
               SolFunctionCallArgumentsImpl(FUNCTION_CALL_ARGUMENTS)
-                <empty list>
-              PsiElement())(')')
+                PsiElement(()('(')
+                PsiElement())(')')
           PsiElement(;)(';')
         PsiWhiteSpace('\n        ')
         SolStatementImpl(STATEMENT)
@@ -148,10 +147,9 @@ Solidity File
                   PsiElement(Identifier)('g')
               SolOptionalCallParamsImpl(OPTIONAL_CALL_PARAMS)
                 <empty list>
-              PsiElement(()('(')
               SolFunctionCallArgumentsImpl(FUNCTION_CALL_ARGUMENTS)
-                <empty list>
-              PsiElement())(')')
+                PsiElement(()('(')
+                PsiElement())(')')
           PsiElement(;)(';')
         PsiWhiteSpace('\n        ')
         SolStatementImpl(STATEMENT)
@@ -194,10 +192,9 @@ Solidity File
                   PsiElement(Identifier)('g')
               SolOptionalCallParamsImpl(OPTIONAL_CALL_PARAMS)
                 <empty list>
-              PsiElement(()('(')
               SolFunctionCallArgumentsImpl(FUNCTION_CALL_ARGUMENTS)
-                <empty list>
-              PsiElement())(')')
+                PsiElement(()('(')
+                PsiElement())(')')
           PsiElement(;)(';')
         PsiWhiteSpace('\n        ')
         SolStatementImpl(STATEMENT)
@@ -277,10 +274,9 @@ Solidity File
                   PsiElement(Identifier)('g')
               SolOptionalCallParamsImpl(OPTIONAL_CALL_PARAMS)
                 <empty list>
-              PsiElement(()('(')
               SolFunctionCallArgumentsImpl(FUNCTION_CALL_ARGUMENTS)
-                <empty list>
-              PsiElement())(')')
+                PsiElement(()('(')
+                PsiElement())(')')
           PsiElement(;)(';')
         PsiWhiteSpace('\n        ')
         SolStatementImpl(STATEMENT)
@@ -307,10 +303,9 @@ Solidity File
                   PsiElement(Identifier)('g')
               SolOptionalCallParamsImpl(OPTIONAL_CALL_PARAMS)
                 <empty list>
-              PsiElement(()('(')
               SolFunctionCallArgumentsImpl(FUNCTION_CALL_ARGUMENTS)
-                <empty list>
-              PsiElement())(')')
+                PsiElement(()('(')
+                PsiElement())(')')
           PsiElement(;)(';')
         PsiWhiteSpace('\n        ')
         SolStatementImpl(STATEMENT)
@@ -338,10 +333,9 @@ Solidity File
                   PsiElement(Identifier)('g')
               SolOptionalCallParamsImpl(OPTIONAL_CALL_PARAMS)
                 <empty list>
-              PsiElement(()('(')
               SolFunctionCallArgumentsImpl(FUNCTION_CALL_ARGUMENTS)
-                <empty list>
-              PsiElement())(')')
+                PsiElement(()('(')
+                PsiElement())(')')
           PsiElement(;)(';')
         PsiWhiteSpace('\n        ')
         SolStatementImpl(STATEMENT)
@@ -387,10 +381,9 @@ Solidity File
                   PsiElement(Identifier)('f')
               SolOptionalCallParamsImpl(OPTIONAL_CALL_PARAMS)
                 <empty list>
-              PsiElement(()('(')
               SolFunctionCallArgumentsImpl(FUNCTION_CALL_ARGUMENTS)
-                <empty list>
-              PsiElement())(')')
+                PsiElement(()('(')
+                PsiElement())(')')
           PsiElement(;)(';')
         PsiWhiteSpace('\n    ')
         PsiElement(})('}')

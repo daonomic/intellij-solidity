@@ -45,8 +45,8 @@ Solidity File
               PsiElement(Identifier)('_preValidatePurchase')
               SolOptionalCallParamsImpl(OPTIONAL_CALL_PARAMS)
                 <empty list>
-              PsiElement(()('(')
               SolFunctionCallArgumentsImpl(FUNCTION_CALL_ARGUMENTS)
+                PsiElement(()('(')
                 SolPrimaryExpressionImpl(PRIMARY_EXPRESSION)
                   SolVarLiteralImpl(VAR_LITERAL)
                     PsiElement(Identifier)('beneficiary')
@@ -55,7 +55,7 @@ Solidity File
                 SolPrimaryExpressionImpl(PRIMARY_EXPRESSION)
                   SolVarLiteralImpl(VAR_LITERAL)
                     PsiElement(Identifier)('weiAmount')
-              PsiElement())(')')
+                PsiElement())(')')
           PsiElement(;)(';')
         PsiWhiteSpace('\n    ')
         PsiElement(})('}')

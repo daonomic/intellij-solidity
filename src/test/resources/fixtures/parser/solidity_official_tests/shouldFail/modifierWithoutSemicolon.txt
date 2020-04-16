@@ -37,8 +37,6 @@ Solidity File
             SolStatementImpl(STATEMENT)
               SolPlaceholderStatementImpl(PLACEHOLDER_STATEMENT)
                 PsiElement(Identifier)('_')
-              PsiErrorElement:'.', ';', <storage location> or Identifier expected, got '}'
-                <empty list>
         PsiWhiteSpace(' ')
         PsiElement(})('}')
     PsiWhiteSpace('\n')

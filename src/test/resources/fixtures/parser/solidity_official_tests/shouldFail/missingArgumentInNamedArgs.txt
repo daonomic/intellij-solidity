@@ -138,8 +138,8 @@ Solidity File
                   PsiElement(Identifier)('a')
               SolOptionalCallParamsImpl(OPTIONAL_CALL_PARAMS)
                 <empty list>
-              PsiElement(()('(')
               SolFunctionCallArgumentsImpl(FUNCTION_CALL_ARGUMENTS)
+                PsiElement(()('(')
                 SolMapExpressionImpl(MAP_EXPRESSION)
                   PsiElement({)('{')
                   PsiElement(Identifier)('a')
@@ -162,7 +162,7 @@ Solidity File
                     <empty list>
                   PsiWhiteSpace(' ')
                   PsiElement(})('}')
-              PsiElement())(')')
+                PsiElement())(')')
           PsiElement(;)(';')
         PsiWhiteSpace(' ')
         PsiElement(})('}')

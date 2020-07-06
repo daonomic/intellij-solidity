@@ -95,14 +95,14 @@ fun inferDeclType(decl: SolNamedElement): SolType {
       }
     }
     is SolTypedDeclarationItem -> getSolType(decl.typeName)
-    is SolVariableDeclaration -> {
-      return if (decl.typeName == null || decl.typeName?.firstChild?.text == "var") {
-        when (val parent = decl.parent) {
-          is SolVariableDefinition -> inferExprType(parent.expression)
-          else -> SolUnknown
-        }
-      } else getSolType(decl.typeName)
-    }
+// todo   is SolVariableDeclaration -> {
+//      return if (decl.typeName == null || decl.typeName?.firstChild?.text == "var") {
+//        when (val parent = decl.parent) {
+//          is SolVariableDefinition -> inferExprType(parent.expression)
+//          else -> SolUnknown
+//        }
+//      } else getSolType(decl.typeName)
+//    }
     is SolContractDefinition -> SolContract(decl)
     is SolStructDefinition -> SolStruct(decl)
     is SolEnumDefinition -> SolEnum(decl)

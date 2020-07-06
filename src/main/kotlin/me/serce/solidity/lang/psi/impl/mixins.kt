@@ -231,6 +231,7 @@ abstract class SolStateVarDeclMixin : SolStubbedNamedElementImpl<SolStateVarDecl
 
   override fun resolveElement() = this
 
+  @Suppress("RemoveExplicitTypeArguments")
   override val visibility
     get() = visibilityModifier?.text?.let { safeValueOf<Visibility>(it.toUpperCase()) } ?: Visibility.INTERNAL
 }
@@ -243,9 +244,7 @@ abstract class SolStructDefMixin : SolStubbedNamedElementImpl<SolStructDefStub>,
 
   override fun parseParameters(): List<Pair<String?, SolType>> {
     return variableDeclarationList
-      .map { it.identifier?.text to getSolType(it.typeName) }
-
-
+      .map { it.varName?.text to getSolType(it.typeName) }
   }
 
   override fun parseType(): SolType {
@@ -292,7 +291,7 @@ abstract class SolModifierInvocationMixin(node: ASTNode) : SolNamedElementImpl(n
   override fun getReference(): SolReference = SolModifierReference(this, this)
 }
 
-abstract class SolVarLiteralMixin(node: ASTNode) : SolNamedElementImpl(node), SolVarLiteral {
+abstract class SolVarNameMixin(node: ASTNode) : SolNamedElementImpl(node), SolVarLiteral {
   override val referenceNameElement: PsiElement
     get() = findChildByType(IDENTIFIER)!!
 
@@ -302,11 +301,15 @@ abstract class SolVarLiteralMixin(node: ASTNode) : SolNamedElementImpl(node), So
   override fun getReference(): SolReference = SolVarLiteralReference(this)
 }
 
-open class SolDeclarationItemMixin(node: ASTNode) : SolNamedElementImpl(node)
+abstract class SolVarLiteralMixin(node: ASTNode) : SolNamedElementImpl(node), SolVarLiteral {
+  override val referenceNameElement: PsiElement
+    get() = findChildByType(IDENTIFIER)!!
 
-open class SolTypedDeclarationItemMixin(node: ASTNode) : SolNamedElementImpl(node)
+  override val referenceName: String
+    get() = referenceNameElement.text
 
-abstract class SolVariableDeclarationMixin(node: ASTNode) : SolVariableDeclaration, SolNamedElementImpl(node)
+  override fun getReference(): SolReference = SolVarLiteralReference(this)
+}
 
 open class SolParameterDefMixin(node: ASTNode) : SolNamedElementImpl(node)
 

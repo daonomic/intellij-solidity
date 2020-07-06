@@ -5,13 +5,13 @@ buildscript {
     }
     dependencies {
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
-        classpath "com.github.JetBrains:gradle-grammar-kit-plugin:2018.1.1"
+        classpath "com.github.JetBrains:gradle-grammar-kit-plugin:2020.1.2"
     }
 }
 
 plugins {
-    id 'org.jetbrains.intellij' version '0.3.1'
-    id 'net.researchgate.release' version '2.4.0'
+    id 'org.jetbrains.intellij' version '0.4.18'
+    id 'net.researchgate.release' version '2.8.1'
 }
 
 
@@ -46,17 +46,16 @@ clean.doFirst {
 intellij {
     pluginName 'Intellij-Solidity'
 
-    version '2016.3.2'
+    version '2017.2.5'
     downloadSources true
     updateSinceUntilBuild = false
 
     sandboxDirectory project.rootDir.canonicalPath + "/.sandbox"
-    systemProperties = ['compiler.process.debug.port': '21232']
 }
 
 grammarKit {
-    grammarKitRelease = '1.5.0'
-    jflexRelease = '1.7.0'
+    grammarKitRelease = '2017.1.7'
+    jflexRelease = '1.7.0-1'
 }
 
 repositories {

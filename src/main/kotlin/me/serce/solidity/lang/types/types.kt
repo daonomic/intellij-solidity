@@ -230,11 +230,11 @@ data class SolStruct(val ref: SolStructDefinition) : SolType {
 data class SolStructVariableDeclaration(
   val ref: SolVariableDeclaration
 ) : SolMember {
-  override fun getName(): String? = ref.name
+  override fun getName(): String? = ref.varName?.name
 
   override fun parseType(): SolType = getSolType(ref.typeName)
 
-  override fun resolveElement(): SolNamedElement? = ref
+  override fun resolveElement(): SolNamedElement? = ref.varName
 
   override fun getPossibleUsage(contextType: ContextType) = Usage.VARIABLE
 }

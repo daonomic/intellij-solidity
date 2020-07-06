@@ -247,26 +247,15 @@ ParameterList ::= '(' ( ParameterDef (',' ParameterDef)* )? ')'
 // semantic restriction: mappings and structs (recursively) containing mappings
 // are not allowed in argument lists
 // TODO these 2 definitions can be private
-DeclarationItem ::= Identifier ','? | ',' {
-    implements = "me.serce.solidity.lang.psi.SolNamedElement"
-    mixin = "me.serce.solidity.lang.psi.impl.SolDeclarationItemMixin"
-}
+DeclarationItem ::= VarName ','? | ','
 DeclarationList ::= '(' DeclarationItem* ')'
-TypedDeclarationItem ::= (TypeName StorageLocation?)? Identifier ','? | ',' {
-    implements = "me.serce.solidity.lang.psi.SolNamedElement"
-    mixin = "me.serce.solidity.lang.psi.impl.SolTypedDeclarationItemMixin"
-}
+TypedDeclarationItem ::= (TypeName StorageLocation?)? VarName ','? | ','
 TypedDeclarationList ::= '(' TypedDeclarationItem*  ')' ;
 // TODO: remove storage declaration from all other places
-private TypedVariableDeclaration ::= TypeName StorageLocation? Identifier
+private TypedVariableDeclaration ::= TypeName (StorageLocation? VarName) {pin=2}
 VariableDeclaration ::=
-    var DeclarationList |
-    DeclarationList |
     TypedDeclarationList |
-    TypedVariableDeclaration {
-    implements = "me.serce.solidity.lang.psi.SolNamedElement"
-    mixin = "me.serce.solidity.lang.psi.impl.SolVariableDeclarationMixin"
-}
+    TypedVariableDeclaration
 
 TypeName ::= ElementaryTypeName
          | MappingTypeName
@@ -324,37 +313,32 @@ private UnfinishedBlock ::= '{' Statement* {
 }
 Block ::= UnfinishedBlock '}'
 
-private UnFinishedStatement ::= DoWhileStatement | ContinueSt | BreakSt | ReturnTupleSt | ReturnSt | ThrowSt | EmitStatement | SimpleStatement
+private UnFinishedStatement ::= DoWhileStatement | ContinueSt | BreakSt | ReturnTupleSt | ReturnSt | ThrowSt | EmitStatement | AssignmentStatement | SimpleStatement
 private FinishedStatement ::= UnFinishedStatement ';' {pin = 1}
-Statement ::= IfStatement | WhileStatement | ForStatement | Block | InlineAssemblyStatement | PlaceholderStatement | TupleStatement | FinishedStatement
-
-SeqExpression ::= '(' ','? Expression (',' Expression)* ','? ')'
-// intentionally not pinned
-TupleStatement ::= VariableDeclaration '=' SeqExpression ';'
-    | SeqExpression '=' SeqExpression ';'
-    | SeqExpression '=' Expression ';'
+Statement ::= IfStatement | WhileStatement | ForStatement | Block | InlineAssemblyStatement | PlaceholderStatement | FinishedStatement
 
 private ExpressionStatement ::= Expression
+AssignmentItem ::= VarLiteral ','? | ','
+AssignmentList ::= '(' AssignmentItem* ')'
+AssignmentStatement ::= (VarLiteral | AssignmentList) ('=' | '|=' | '^=' | '&=' | '<<=' | '>>=' | '+=' | '-=' | '*=' | '/=' | '%=') Expression
 IfStatement ::= if '(' Expression ')' Statement ( else Statement )? {pin = 1}
 WhileStatement ::= while '(' Expression ')' Statement {pin = 1}
 PlaceholderStatement ::= '_' ';'?
-private SimpleStatement ::= VariableDefinition | ExpressionStatement
+private SimpleStatement ::= ExpressionStatement | VariableDefinition | VariableDeclaration
 ForStatement ::= for '(' (SimpleStatement)? ';' (Expression)? ';' (ExpressionStatement)? ')' Statement {pin=1}
 InlineAssemblyStatement ::= assembly AssemblyBlock {pin=1}
 DoWhileStatement ::= do Statement while '(' Expression ')' {pin=1}
 ContinueSt ::= continue
 BreakSt ::= break
 ReturnSt ::= return Expression? {pin=1}
-private Tuple ::= '(' Expression (',' Expression)+ ')'
-ReturnTupleSt ::= return Tuple
 ThrowSt ::= throw
 EmitStatement ::= emit CallExpression {pin=1}
-VariableDefinition ::= VariableDeclaration ( '=' Expression )?
+VarVariableDefinition ::= var (VarName | DeclarationList) {pin=1}
+VariableDefinition ::= (VarVariableDefinition | VariableDeclaration) '=' Expression
 
 // see https://solidity.readthedocs.io/en/v0.4.21/miscellaneous.html#order-of-precedence-of-operators
 Expression ::=
-  AssignmentExpression
-  | TernaryExpression
+  TernaryExpression
   | OrExpression
   | AndExpression
   | EqExpression
@@ -378,9 +362,9 @@ private HighestPriorityGroup ::= IncrementExpression
 										  | CallExpression
 										  | ElementaryCastExpression
   										| DotExpression
+  										| TupleExpression
                       | ParenExpression
 
-AssignmentExpression ::= Expression ('=' | '|=' | '^=' | '&=' | '<<=' | '>>=' | '+=' | '-=' | '*=' | '/=' | '%=') Expression { rightAssociative=true }
 InlineArrayExpression ::= '[' Expression (',' Expression)* ']'
 TernaryExpression ::= Expression '?' RightTernaryExpression
 private RightTernaryExpression ::= Expression ':' Expression
@@ -397,7 +381,9 @@ MultDivExpression ::= Expression ('*' | '/' | '%') Expression
 ExponentExpression ::= Expression '**' Expression
 UnaryExpression ::= ('!' | '~' | delete | '++' | '--' | '+' | '-') Expression {pin=1}
 IncrementExpression ::= Expression ('++' | '--')
-ParenExpression ::= '(' Expression ')' { pin = 1 }
+private ParenExpressionStart ::= '(' Expression
+ParenExpression ::= ParenExpressionStart ')' {pin=1}
+TupleExpression ::= '(' Expression (',' Expression)+ ')'
 
 PrimaryExpression ::= VarLiteral
                   | BooleanLiteral
@@ -408,6 +394,10 @@ PrimaryExpression ::= VarLiteral
 VarLiteral ::= Identifier {
     implements = "me.serce.solidity.lang.psi.SolReferenceElement"
     mixin = "me.serce.solidity.lang.psi.impl.SolVarLiteralMixin"
+}
+VarName ::= Identifier {
+		implements = "me.serce.solidity.lang.psi.SolNamedElement"
+		mixin = "me.serce.solidity.lang.psi.impl.SolNamedElementImpl"
 }
 OptionalCallParam ::= ('value' ParenExpression) | ('gas' ParenExpression)
 OptionalCallParams ::= ('.' 'call')? ('.' OptionalCallParam)*
@@ -460,7 +450,7 @@ private ScientificNumber ::= scientificNumber
 
 private PrimitiveLiteral ::= intNumType | uIntNumType | byteNumType | bytesNumType | fixedNumType | uFixedNumType | booleanLiteral | ( address payable ) | address | string | bool
 
-ElementaryTypeName ::= ( address payable ) | address | bool | string | var | NumberType {
+ElementaryTypeName ::= ( address payable ) | address | bool | string | NumberType {
     stubClass = "me.serce.solidity.lang.stubs.SolTypeRefStub"
     elementTypeFactory = "me.serce.solidity.lang.stubs.ImplKt.factory"
 }

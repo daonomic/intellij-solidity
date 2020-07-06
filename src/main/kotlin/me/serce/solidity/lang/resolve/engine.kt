@@ -143,7 +143,7 @@ object SolResolver {
           val calls = byName.asSequence()
             .filter { it !is SolStateVariableDeclaration }
             .filterIsInstance<SolCallable>()
-            .filter { it.canBeApplied(parent.functionCallArguments?.expressionList ?: emptyList()) }
+            .filter { it.canBeApplied(parent.functionCallArguments.expressionList) }
             .mapNotNull { it.resolveElement() }
             .toList()
           if (calls.size == 1) {
@@ -250,13 +250,21 @@ object SolResolver {
 
   private fun lexicalDeclarations(scope: PsiElement, place: PsiElement): Sequence<SolNamedElement> {
     return when (scope) {
-      is SolVariableDeclaration -> {
-        scope.declarationList?.declarationItemList?.filterIsInstance<SolNamedElement>()?.asSequence()
-          ?: scope.typedDeclarationList?.typedDeclarationItemList?.filterIsInstance<SolNamedElement>()?.asSequence()
-          ?: sequenceOf(scope)
+      is SolVarVariableDefinition -> {
+        scope.varName?.let { sequenceOf(it) }
+          ?: scope.declarationList?.declarationItemList?.filterIsInstance<SolNamedElement>()?.asSequence()
+          ?: emptySequence()
       }
-      is SolVariableDefinition -> lexicalDeclarations(scope.firstChild, place)
-
+      is SolVariableDefinition -> {
+        scope.varVariableDefinition?.let { lexicalDeclarations(it, place) }
+          ?: scope.variableDeclaration?.let { lexicalDeclarations(it, place) }
+          ?: emptySequence()
+      }
+      is SolVariableDeclaration -> {
+        scope.varName?.let { sequenceOf(it) }
+          ?: scope.typedDeclarationList?.typedDeclarationItemList?.filterIsInstance<SolNamedElement>()?.asSequence()
+          ?: emptySequence()
+      }
       is SolStateVariableDeclaration -> sequenceOf(scope)
       is SolContractDefinition -> {
         val childrenScope = sequenceOf(
@@ -304,19 +312,6 @@ object SolResolver {
           imports + contracts
         } ?: emptySequence()
       }
-
-      is SolTupleStatement -> {
-        scope.variableDeclaration?.let {
-          val declarationList = it.declarationList
-          val typedDeclarationList = it.typedDeclarationList
-          when {
-            declarationList != null -> declarationList.declarationItemList.asSequence()
-            typedDeclarationList != null -> typedDeclarationList.typedDeclarationItemList.asSequence()
-            else -> emptySequence()
-          }
-        } ?: emptySequence()
-      }
-
       else -> emptySequence()
     }
   }

@@ -57,13 +57,13 @@ private fun SolStatement.hasAssignment(el: SolNamedElement): Boolean {
     return it.hasAssignment(el)
   }
 
-  this.expression?.let {
-    if (it is SolAssignmentExpression) {
-      return it.expressionList[0].isReferenceTo(el)
-    } else if (it is SolCallExpression && it.revert) {
-      return true
-    }
-  }
+//todo  this.expression?.let {
+//    if (it is SolAssignmentExpression) {
+//      return it.expressionList[0].isReferenceTo(el)
+//    } else if (it is SolCallExpression && it.revert) {
+//      return true
+//    }
+//  }
 
   this.inlineAssemblyStatement.let { st ->
     st?.assemblyBlock?.let {
@@ -79,21 +79,22 @@ private fun SolStatement.hasAssignment(el: SolNamedElement): Boolean {
     return it.hasAssignment(el)
   }
 
-  this.tupleStatement?.let { st ->
-    val declaration = st.variableDeclaration
-    val expressions = st.expressionList
-    if (declaration != null) {
-      return declaration.declarationList?.declarationItemList?.any { it.hasAssignment(el) }
-        ?: declaration.typedDeclarationList?.typedDeclarationItemList?.any { it.hasAssignment(el) }
-        ?: false
-    } else {
-      expressions.firstOrNull()?.let {
-        if (it is SolSeqExpression) {
-          return it.expressionList.any { expr -> expr.isReferenceTo(el) }
-        }
-      }
-    }
-  }
+//  this.tupleStatement?.let { st ->
+//    val declaration = st.variableDeclaration
+//    val expressions = st.expressionList
+//    if (declaration != null) {
+////      return declaration.declarationList?.declarationItemList?.any { it.hasAssignment(el) }
+////        ?: declaration.typedDeclarationList?.typedDeclarationItemList?.any { it.hasAssignment(el) }
+////todo        ?: false
+//      false
+//    } else {
+//      expressions.firstOrNull()?.let {
+//        if (it is SolSeqExpression) {
+//          return it.expressionList.any { expr -> expr.isReferenceTo(el) }
+//        }
+//      }
+//    }
+//  }
 
   return false
 }
@@ -139,10 +140,6 @@ private val SolStatement.returns: Boolean
       return true
     }
 
-    if (this.returnTupleSt != null) {
-      return true
-    }
-
     return false
   }
 
@@ -180,7 +177,7 @@ private fun SolIfStatement.hasAssignment(el: SolNamedElement): Boolean =
   }
 
 private fun SolVariableDefinition.hasAssignment(el: SolNamedElement): Boolean =
-  this.variableDeclaration.reference?.resolve() == el
+  this.variableDeclaration?.reference?.resolve() == el
 
 private fun SolAssemblyBlock.hasAssignment(el: SolNamedElement): Boolean =
   this.assemblyItemList.any { it.hasAssignment(el) }
@@ -200,11 +197,11 @@ private fun SolAssemblyItem.hasAssignment(el: SolNamedElement): Boolean {
 }
 
 private fun SolDeclarationItem.hasAssignment(el: SolNamedElement): Boolean {
-  return this.identifier?.text == el.name
+  return this.varName?.text == el.name
 }
 
 private fun SolTypedDeclarationItem.hasAssignment(el: SolNamedElement): Boolean {
-  return this.identifier?.text == el.name
+  return this.varName?.text == el.name
 }
 
 private fun SolElement.isGlobal(): Boolean {

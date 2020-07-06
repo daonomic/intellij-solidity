@@ -27,14 +27,14 @@ class UnprotectedFunctionInspection : LocalInspectionTool() {
     if (funDef.modifiers.isEmpty() && !funDef.isConstructor) {
       for (statement in funDef.block?.statementList ?: emptyList()) {
         val expression = statement.expression
-        if (expression is SolAssignmentExpression) {
-          val left = expression.expressionList.first()
-          if (maybeOwnerReference(left)) {
-            val element = funDef.identifier ?: funDef
-            holder.registerProblem(element, MESSAGE)
-            return
-          }
-        }
+//      todo  if (expression is SolAssignmentExpression) {
+//          val left = expression.expressionList.first()
+//          if (maybeOwnerReference(left)) {
+//            val element = funDef.identifier ?: funDef
+//            holder.registerProblem(element, MESSAGE)
+//            return
+//          }
+//        }
       }
     }
   }
